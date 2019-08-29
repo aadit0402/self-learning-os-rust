@@ -92,15 +92,44 @@ impl Writer {
                 }
         }
     }
-    fn new_line(&mut self) {
+    /*fn new_line(&mut self) {
         /*TODO */
-    }
+    } */
 }
 
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         self.write_string(s);
         Ok(())
+    }
+}
+
+/* this will provide support of newline */
+impl Writer {
+    fn new_line(&mut self) {
+        for row in 1..BUFFER_HEIGHT { /* omitted 0th row to avoid shifting off the screen */ 
+            for col in 0..BUFFER_WIDTH { /* .. indicate exclusive the upper bound */
+                let character = self.buffer.char[row][col].read();
+                self.buffer.char[row - 1][col].write(character);
+            }
+        }
+        self.clear_row(BUFFER_HEIGHT - 1);
+        self.column_position = 0;
+    }
+
+   /* fn clear_row(&mut self, row: usize) {/* TODO */} */
+}
+
+/* to overwrite the characters with a space characters */
+impl Writer {
+    fn clear_row(&mut self, row: usize) {
+        let blank = ScreenChar {
+            ascii_character: b' ',
+            color_code: self.color_code,
+        };
+        for col in 0..BUFFER_WIDTH {
+            self.buffer.char[row][col].write(blank);
+        }
     }
 }
 
@@ -116,7 +145,7 @@ impl Writer {
 
         }
     }
-    fn clear_row(&mut self, row: usize) { /* TODO */}
+    /*fn clear_row(&mut self, row: usize) { /* TODO */}*/
 }
 
 pub fn print_something() {
