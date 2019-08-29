@@ -1,0 +1,1000 @@
+ 1009  git status
+ 1010  git log
+ 1011  git pull
+ 1012  clear
+ 1013  git status
+ 1014  clear
+ 1015  git pull
+ 1016  git stash
+ 1017  clear
+ 1018  git status
+ 1019  clear
+ 1020  git pull
+ 1021  make
+ 1022  clear
+ 1023  make simulate
+ 1024  clear
+ 1025  git log
+ 1026  git show 33c3f3361c1f501811f1b0b65562b11b69a28499
+ 1027  git show af76bdad9770579485bffb0c8455a0e5864f6f49
+ 1028  git show a961c80f5df91bfd91d7c37add12ecb8d84e1ab5
+ 1029  clear
+ 1030  git log
+ 1031  clear
+ 1032  cd packages/core-supervisor/fel4/rust-sel4/
+ 1033  ls
+ 1034  cd src/
+ 1035  ls -lrt
+ 1036  git log -p macros.rs
+ 1037  clear
+ 1038  ls -lrt
+ 1039  cd
+ 1040  clear
+ 1041  cd Desktop/
+ 1042  ls
+ 1043  cd junk/
+ 1044  nano history.txt | less
+ 1045  clear
+ 1046  nano history.txt 
+ 1047  vi history.txt 
+ 1048  cd ..
+ 1049  cd
+ 1050  git clone --recursive https://gitlab.com/uxrt/uxrt-toplevel
+ 1051  cd uxrt-toplevel
+ 1052  make
+ 1053  clear
+ 1054  vi ../Desktop/junk/history.txt 
+ 1055  clear
+ 1056  cd ..
+ 1057  mkdir os_in_rust
+ 1058  cd os_in_rust/
+ 1059  git clone https://github.com/phil-opp/blog_os.git
+ 1060  cd ..
+ 1061  mkdir osrust
+ 1062  cd osrust/
+ 1063  nano multiboot_header.asm
+ 1064  nasm multiboot_header.asm 
+ 1065  sudo apt install nasm
+ 1066  nasm multiboot_header.asm 
+ 1067  ls
+ 1068  file multiboot_header
+ 1069  hexdump multiboot_header
+ 1070  hexdump -x multiboot_header
+ 1071  nano boot.asm
+ 1072  clear
+ 1073  nasm boot.asm 
+ 1074  lk
+ 1075  ls
+ 1076  clear
+ 1077  hexdump -x boot
+ 1078  vi linker.ld
+ 1079  clear
+ 1080  nasm -f elf64 multiboot_header.asm 
+ 1081  nasm -f elf64 boot.as
+ 1082  nasm -f elf64 boot.asm
+ 1083  clear
+ 1084  ls
+ 1085  ld -n -o kernel.bin -T linker.ld multiboot_header.o boot.o
+ 1086  ls -lrt
+ 1087  objdump -h kernel.bin
+ 1088  mkdir isofiles
+ 1089  cd isofiles/
+ 1090  mkdir boot
+ 1091  cd boot
+ 1092  mkdir grub
+ 1093  cd grub
+ 1094  vi grub.cfg
+ 1095  cd ..
+ 1096  ls
+ 1097  cp ../../kernel.bin .
+ 1098  cd ..
+ 1099  tree
+ 1100  cd ..
+ 1101  tree
+ 1102  clear
+ 1103  cd isofiles/boot/grub/
+ 1104  ls
+ 1105  clear
+ 1106  grub-mkrescue -o os.iso isofiles
+ 1107  ls
+ 1108  cd ..
+ 1109  ls
+ 1110  cd ..
+ 1111  ls -lrt
+ 1112  tree
+ 1113  clear
+ 1114  ls
+ 1115  find . -name os.iso
+ 1116  cd isofiles/
+ 1117  ls
+ 1118  tree
+ 1119  clear
+ 1120  cd boot/grub/
+ 1121  ls
+ 1122  grub-mkrescue --verbose -o os.iso isofiles
+ 1123  ls
+ 1124  cd ..
+ 1125  tree
+ 1126  cd ..
+ 1127  tree
+ 1128  clear
+ 1129  cd isofiles/boot/grub/
+ 1130  ls
+ 1131  clear
+ 1132  grub-mkrescue -o --verbose -d /usr/lib/grub/x86_64-efi
+ 1133  grub-mkrescue -o --verbose -d /usr/lib/grub/x86_64-efi os.iso isofiles
+ 1134  cd ..
+ 1135  tree
+ 1136  clear
+ 1137  cd ..
+ 1138  tree
+ 1139  qemu-system-x86_64 -cdrom os.iso
+ 1140  sudo apt-get install grub-pc-bin
+ 1141  clear
+ 1142  cd isofiles/boot/grub/
+ 1143  ls
+ 1144  clear
+ 1145  grub-mkrescue -o os.iso grub.cfg 
+ 1146  grub-mkrescue -o os.img iso
+ 1147  sudo apt-get install xorriso
+ 1148  grub-mkrescue -o os.iso grub.cfg 
+ 1149  tree
+ 1150  file os.iso 
+ 1151  clear
+ 1152  ls
+ 1153  clear
+ 1154  cd ..
+ 1155  tree
+ 1156  clear
+ 1157  cd isofiles/
+ 1158  ls
+ 1159  cd boot/grub/
+ 1160  ls
+ 1161  qemu-system-x86_64 -cdrom os.iso 
+ 1162  rm -f os.iso 
+ 1163  clear
+ 1164  ls
+ 1165  clear
+ 1166  grub-mkrescue /usr/lib/grub/i386-pc -o myos.iso isofiles
+ 1167  ls
+ 1168  cd ..
+ 1169  tree
+ 1170  cd ..
+ 1171  ls
+ 1172  cd ..
+ 1173  ls
+ 1174  clear
+ 1175  grub-mkrescue /usr/lib/grub/i386-pc -o myos.iso isofiles
+ 1176  find . -name myos.iso
+ 1177  tree
+ 1178  qemu-system-x86_64 -cdrom myos.iso 
+ 1179  clear
+ 1180  mkdir -p src/arch/x86_64
+ 1181  clear
+ 1182  touch Makefile
+ 1183  ls
+ 1184  clear
+ 1185  ls
+ 1186  cp multiboot_header.asm src/arch/x86_64/
+ 1187  cp boot.asm src/arch/x86_64/
+ 1188  cp linker.ld src/arch/x86_64/
+ 1189  cp isofiles/boot/grub/grub.cfg src/arch/x86_64/
+ 1190  cd src/arch/x86_64/
+ 1191  ls
+ 1192  cd ..
+ 1193  cd
+ 1194  cd osrust/
+ 1195  tree
+ 1196  clear
+ 1197  ls -all
+ 1198  rm -f multiboot_heade* kernel.bin boot*
+ 1199  ls -all
+ 1200  rm -f myos.iso linker.ld 
+ 1201  ls -all
+ 1202  clear
+ 1203  vi Makefile 
+ 1204  make
+ 1205  clear
+ 1206  nano rustos_tut.txt
+ 1207  ls
+ 1208  cd src/
+ 1209  cd arch/x86_64/
+ 1210  ls
+ 1211  vi boot.asm
+ 1212  cd ../../
+ 1213  cd ..
+ 1214  vi rustos_tut.txt 
+ 1215  clear
+ 1216  cd ../uxrt-toplevel
+ 1217  vi Makefile 
+ 1218  clear
+ 1219  cd ..
+ 1220  cd osrust/
+ 1221  ls
+ 1222  clear
+ 1223  find . -name linker.ld
+ 1224  tree
+ 1225  gdb build/kernel-x86_64.bin 
+ 1226  clear
+ 1227  make run
+ 1228  clear
+ 1229  make run
+ 1230  make clean
+ 1231  make run
+ 1232  gdb build/kernel-x86_64.bin 
+ 1233  ls
+ 1234  rm Makefile~
+ 1235  ls
+ 1236  clear
+ 1237  rm -f build/
+ 1238  rm -rf build/
+ 1239  ls
+ 1240  clear
+ 1241  make run
+ 1242  gdb build/kernel-x86_64.bin 
+ 1243  clear
+ 1244  make clean
+ 1245  ls
+ 1246  clear
+ 1247  tree
+ 1248  clear
+ 1249  make run
+ 1250  gdb build/kernel-x86_64.bin 
+ 1251  clear
+ 1252  gdb build/kernel-x86_64.bin 
+ 1253  make clean
+ 1254  clear
+ 1255  make run
+ 1256  gdb build/kernel-x86_64.bin 
+ 1257  clear
+ 1258  rm -rf build/
+ 1259  ls
+ 1260  clear
+ 1261  make
+ 1262  make run
+ 1263  gdb build/kernel-x86_64.bin 
+ 1264  clear
+ 1265  clear
+ 1266  cd osrust/
+ 1267  lk
+ 1268  ls
+ 1269  make run
+ 1270  clear
+ 1271  gdb build/kernel-x86_64.bin 
+ 1272  clear
+ 1273  file build/kernel-x86_64.bin 
+ 1274  objdump -x build/kernel-x86_64.bin 
+ 1275  clear
+ 1276  gdb build/kernel-x86_64.bin 
+ 1277  make clean
+ 1278  lk
+ 1279  ls\
+ 1280  ls
+ 1281  clear
+ 1282  make clean
+ 1283  ls
+ 1284  clear
+ 1285  make run
+ 1286  make clean
+ 1287  tree
+ 1288  clear
+ 1289  make run
+ 1290  vi `find . -name boot.asm`
+ 1291  grep -rni "36d76289"
+ 1292  vi `find . -name boot.asm`
+ 1293  clear
+ 1294  make clean
+ 1295  tree
+ 1296  clear
+ 1297  tree
+ 1298  clear
+ 1299  gdb build/kernel-x86_64.bin 
+ 1300  make clean 
+ 1301  ls
+ 1302  make run
+ 1303  clear
+ 1304  gdb build/kernel-x86_64.bin 
+ 1305  clear
+ 1306  cd src/
+ 1307  cd arch/x86_64/
+ 1308  ls
+ 1309  clear
+ 1310  ls
+ 1311  rm -f boot.asm~ grub.cfg~ multiboot_header.asm~
+ 1312  ls
+ 1313  clear
+ 1314  vi *
+ 1315  clear
+ 1316  cd ..
+ 1317  make clean
+ 1318  make run
+ 1319  clear
+ 1320  gdb build/kernel-x86_64.bin 
+ 1321  gdb build/kernel-x86_64.bin 
+ 1322  clear
+ 1323  make clean
+ 1324  tree
+ 1325  make clean
+ 1326  clear
+ 1327  make run
+ 1328  clear
+ 1329  make run
+ 1330  clear
+ 1331  cd ../uxrt-toplevel
+ 1332  ls
+ 1333  cd build/
+ 1334  ls
+ 1335  tree
+ 1336  gdb
+ 1337  clear
+ 1338  cd ..
+ 1339  gdb /home/aditya/uxrt-toplevel/packages/core-supervisor/process-server/artifacts/debug/feL4img 
+ 1340  clear
+ 1341  exit
+ 1342  cd
+ 1343  nano ab.c
+ 1344  gcc -c -pg ab.c
+ 1345  gcc -pg -osingo ab.o
+ 1346  gprof ./singo 
+ 1347  lk
+ 1348  ls -lrt 
+ 1349  gprof ./singo
+ 1350  clear
+ 1351  ls
+ 1352  cd fresh\ source/
+ 1353  ls
+ 1354  cd newlib-cygwin/
+ 1355  ls
+ 1356  clear
+ 1357  cd ..
+ 1358  ls
+ 1359  cd call_rec/
+ 1360  ;s
+ 1361  ls
+ 1362  exit
+ 1363  cd
+ 1364  vi linkedlist.c
+ 1365  man vi
+ 1366  clear
+ 1367  cd Desktop/
+ 1368  cd ude-syssec-challenge/
+ 1369  ls
+ 1370  clear
+ 1371  file challenge 
+ 1372  ./challenge 
+ 1373  clear
+ 1374  gdb c
+ 1375  clear
+ 1376  ls
+ 1377  gdb challenge 
+ 1378  clear
+ 1379  cd ..
+ 1380  cd uxrt-toplevel
+ 1381  lk
+ 1382  ls -lrt
+ 1383  clear
+ 1384  make run
+ 1385  clear
+ 1386  make simulate1
+ 1387  make simulate
+ 1388  clear
+ 1389  vi Makefile 
+ 1390  clear
+ 1391  make simulate-gdb 
+ 1392  exit
+ 1393  cd osrust/
+ 1394  ls
+ 1395  make clean
+ 1396  clear
+ 1397  make
+ 1398  make run
+ 1399  gdb build/kernel-x86_64.bin 
+ 1400  clear
+ 1401  make clean
+ 1402  tree
+ 1403  clear
+ 1404  make 
+ 1405  make run
+ 1406  gdb build/kernel-x86_64.bin 
+ 1407  clear
+ 1408  mkdir rust-toolchain
+ 1409  cd rust-toolchain/
+ 1410  nightly
+ 1411  nano Cargo.toml
+ 1412  clear
+ 1413  nightly
+ 1414  exit
+ 1415  cd Desktop/ude-syssec-challenge/
+ 1416  file challenge 
+ 1417  qemu-arm challenge 
+ 1418  firefox google.com
+ 1419  nano hello_world.c
+ 1420  clear
+ 1421  gcc -o hello_world helloworld.c
+ 1422  gcc -o hello_world hello_world.c
+ 1423  file hello_world
+ 1424  ./hello_world 
+ 1425  sb2 gcc -o hello_world hello_world.c
+ 1426  qemu-arm challenge 
+ 1427  ifconfig
+ 1428  clear
+ 1429  sudo apt-get install gcc-arm-linux-gnueabihf
+ 1430  clear
+ 1431  gdb ./challenge 
+ 1432  clear
+ 1433  file challenge 
+ 1434  ldd challenge 
+ 1435  qemu-arm challenge 
+ 1436  cd
+ 1437  cd /
+ 1438  ls
+ 1439  clear
+ 1440  find . -name ld-linux-armhf.so
+ 1441  sudo su
+ 1442  clear
+ 1443  cd 
+ 1444  clear
+ 1445  cd Desktop/ude-syssec-challenge/
+ 1446  strings challenge 
+ 1447  dpkg --add-architecture armhf
+ 1448  sudo dpkg --add-architecture armhf
+ 1449  sudo vi /etc/apt/sources.list
+ 1450  clear
+ 1451  sudo vi /etc/apt/sources.list.d
+ 1452  sudo apt-get update
+ 1453  sudo apt-get install crossbuild-essential-armhf 
+ 1454  qemu-arm challenge 
+ 1455  cd /
+ 1456  sudo su
+ 1457  cleae
+ 1458  clear
+ 1459  cd
+ 1460  cd Desktop/ude-syssec-challenge/
+ 1461  qemu-arm challenge -L /usr/arm-linux-gnueabihf/lib/ld-linux-armhf.so.3 
+ 1462  clear
+ 1463  export PATH=/usr/arm-linux-gnueabihf/lib:$PATH
+ 1464  echo $PATH
+ 1465  clear
+ 1466  qemu-arm challenge 
+ 1467  qemu-arm -L /usr/arm-linux-gnueabihf /home/aditya/Desktop/ude-syssec-challenge/challenge 
+ 1468  cd ../
+ 1469  cd ..
+ 1470  cd Downloads/
+ 1471  cd hackme_files/
+ 1472  ls
+ 1473  clear
+ 1474  ./hackme 
+ 1475  clear
+ 1476  file hackme
+ 1477  clear
+ 1478  strings hackme
+ 1479  clear
+ 1480  strace hackme
+ 1481  strace ./hackme 
+ 1482  strace ./hackme | grep write
+ 1483  strace ./hackme | grep -i write
+ 1484  clear
+ 1485  ltrace ./hackme 
+ 1486  vi fake.c
+ 1487  gcc -shared -fPIC -o fake.so fake.c
+ 1488  ls
+ 1489  file fake.so 
+ 1490  file hackme
+ 1491  gcc -shared -m32 -fPIC -o fake.so fake.c
+ 1492  ls
+ 1493  file fake.so 
+ 1494  clear
+ 1495  ls
+ 1496  file fake.so 
+ 1497  file hackme
+ 1498  strace -E LD_PRELOAD=./fake.so ./hackme
+ 1499  objdump -D ./hackme > out.asm
+ 1500  ls
+ 1501  vi out.asm
+ 1502  clear
+ 1503  ls
+ 1504  rm -f out.asm objdumpout.txt 
+ 1505  objdump -D ./hackme > out.asm
+ 1506  ls
+ 1507  clear
+ 1508  ls
+ 1509  vi out.asm 
+ 1510  clear
+ 1511  vi out.asm 
+ 1512  clear
+ 1513  cd ..
+ 1514  cd uxrt-toplevel
+ 1515  clear
+ 1516  make simulate-gdb 
+ 1517  exit
+ 1518  cd uxrt-toplevel
+ 1519  cd build/
+ 1520  tree 
+ 1521  cd ..
+ 1522  gdb 
+ 1523  clear
+ 1524  exit
+ 1525  cd 
+ 1526  cd Desktop/
+ 1527  mkdir interview
+ 1528  cd interview/
+ 1529  git clone https://github.com/huihut/interview.git
+ 1530  ls
+ 1531  cd interview/
+ 1532  ks
+ 1533  ls
+ 1534  cd DesignPattern/
+ 1535  ls
+ 1536  vi README.md 
+ 1537  vi main.cpp 
+ 1538  cd SingletonPattern/
+ 1539  ls'
+ 1540  ls
+ 1541  vi README.md 
+ 1542  clear
+ 1543  exit
+ 1544  cd
+ 1545  vi hello.c
+ 1546  arm-elf-gcc hello.c -o hello
+ 1547  arm-none-eabi-gcc hello.c -o hello
+ 1548  arm-linux-gnueabihf-gcc hello.c -o hello
+ 1549  ls hello
+ 1550  file hello
+ 1551  qemu-arm hello
+ 1552  cd /
+ 1553  sudo su
+ 1554  exit
+ 1555  cd
+ 1556  clear
+ 1557  qemu-arm hello
+ 1558  qemu-arm -L /usr/arm-linux-gnueabihf/lib hello
+ 1559  clear
+ 1560  exit
+ 1561  cd ../../../uxrt-toplevel/packages/
+ 1562  find . -name *.lock
+ 1563  vi ./core-supervisor/process-server/Cargo.lock
+ 1564  cd ./core-supervisor/process-server/
+ 1565  ls
+ 1566  vi Cargo.toml 
+ 1567  grep -rni "[lib]"
+ 1568  clear
+ 1569  grep -rni "[lib]"
+ 1570  :wq
+ 1571  clear
+ 1572  grep -rni "panic_fmt"
+ 1573  clear
+ 1574  exit
+ 1575  cd
+ 1576  cd Downloads/
+ 1577  ls -lrt
+ 1578  cp 2019_02_02_Decky_Hardware_Software_Co_Design.pdf ../Desktop/
+ 1579  cd ../Desktop/
+ 1580  ls -lrt
+ 1581  mkdir must-read-paper
+ 1582  cd must-read-paper/
+ 1583  cp ../2019_02_02_Decky_Hardware_Software_Co_Design.pdf .
+ 1584  ls
+ 1585  cd ..
+ 1586  ls -lrt
+ 1587  rm -f 2019_02_02_Decky_Hardware_Software_Co_Design.pdf 
+ 1588  ls
+ 1589  clear
+ 1590  exit
+ 1591  cd osrust/
+ 1592  ls
+ 1593  clear
+ 1594  ls
+ 1595  cd pill-opp/
+ 1596  ls
+ 1597  clear
+ 1598  cd rust-code/
+ 1599  ls
+ 1600  clear
+ 1601  ls
+ 1602  clear
+ 1603  ls
+ 1604  cd src/
+ 1605  ls
+ 1606  cd ..
+ 1607  ls
+ 1608  cd target/
+ 1609  ls
+ 1610  tree
+ 1611  clear
+ 1612  cd ../src/
+ 1613  ls
+ 1614  vi minimal_rust_kernel.txt 
+ 1615  clear
+ 1616  ls
+ 1617  cd ..
+ 1618  ls
+ 1619  rm -rf target
+ 1620  ls
+ 1621  clear
+ 1622  cd blog_os/
+ 1623  ls
+ 1624  rm -f target
+ 1625  rm -rf target/
+ 1626  ls
+ 1627  vi Cargo.toml 
+ 1628  tree
+ 1629  cargo xbuild
+ 1630  clear
+ 1631  ls
+ 1632  rm -rf target/
+ 1633  ls
+ 1634  clear
+ 1635  cargo xbuild --target x86_64-blog_os.json 
+ 1636  ls
+ 1637  cd target/
+ 1638  ks
+ 1639  tree
+ 1640  clear
+ 1641  cd ..
+ 1642  clear
+ 1643  ls
+ 1644  cargo install bootimage --version "^0.7.3"
+ 1645  cargo install bootimage
+ 1646  sudo apt-get install libssl-dev
+ 1647  cargo install bootimage
+ 1648  rustup component add rust-src
+ 1649  clear
+ 1650  cargo install cargo-xbuild
+ 1651  cargo install cargo-xbuild --force
+ 1652  ls
+ 1653  rm -rf target/
+ 1654  ls
+ 1655  cd src/
+ 1656  ls
+ 1657  cd ..
+ 1658  ls
+ 1659  cd src/
+ 1660  ls
+ 1661  cd ..
+ 1662  cd blog_os/
+ 1663  ls
+ 1664  rm -rf Cargo.lock 
+ 1665  ls
+ 1666  clear
+ 1667  cargo install cargo-xbuild
+ 1668  cd ~/.cargo/
+ 1669  ls
+ 1670  cd bin/
+ 1671  ls
+ 1672  clear
+ 1673  cd -
+ 1674  cd ..
+ 1675  cd osrust/pill-opp/rust-code/blog_os/
+ 1676  ls
+ 1677  clear
+ 1678  cargo xbuild --target x86_64-blog_os.json
+ 1679  ls
+ 1680  rm -f /home/aditya/x86_64-blog_os.json 
+ 1681  ls
+ 1682  cd target/
+ 1683  tree
+ 1684  clear
+ 1685  cd ..
+ 1686  ls
+ 1687  rm -rf target/
+ 1688  ls
+ 1689  clear
+ 1690  vi Car*.tom
+ 1691  vi Cargo.toml 
+ 1692  ls
+ 1693  cargo xbuild --target x86_64-blog_os.json
+ 1694  clear
+ 1695  ls
+ 1696  vi Cargo.toml 
+ 1697  clear
+ 1698  cargo install bootimage 
+ 1699  cargo install bootimage --target x86_64-blog_os.json 
+ 1700  cargo install bootimage --version "^0.7.3" --target /home/aditya/osrustx86_64-blog_os.json 
+ 1701  ls
+ 1702  cd target/
+ 1703  ls
+ 1704  tree
+ 1705  cargo +nightly install bootimage --version "^0.7.3" --target x86_64-blog_os.json 
+ 1706  cargo nightly install bootimage --version "^0.7.3" --target x86_64-blog_os.json 
+ 1707  cargo  install bootimage --version "^0.7.3" --target /home/aditya/osrust/pill-opp/rust-code/blog_os/x86_64-blog_os.json 
+ 1708  vi /tmp/cargo-installV6iAGj
+ 1709  clear
+ 1710  cd ..
+ 1711  ls
+ 1712  rm -rf target/
+ 1713  ls
+ 1714  clear
+ 1715  cargo  install bootimage --version "^0.7.3" --target /home/aditya/osrust/pill-opp/rust-code/blog_os/x86_64-blog_os.json 
+ 1716  clear
+ 1717  ls
+ 1718  cd src/
+ 1719  ls
+ 1720  clear
+ 1721  cd ..
+ 1722  tree
+ 1723  cd ..
+ 1724  cd rust-code/blog_os/
+ 1725  ls
+ 1726  cargo xbuild --target /home/aditya/osrust/pill-opp/rust-code/blog_os/x86_64-blog_os.json 
+ 1727  tree
+ 1728  ls
+ 1729  find . -name *.bin
+ 1730  clear
+ 1731  ls /home/ | grep x86_64
+ 1732  cargo install bootimage --version "^0.7.3" --target /home/aditya/osrust/pill-opp/rust-code/blog_os/x86_64-blog_os.json 
+ 1733  clear
+ 1734  cd ..
+ 1735  cd uxrt-toplevel
+ 1736  clear
+ 1737  ls
+ 1738  make clean
+ 1739  ls
+ 1740  make
+ 1741  clear
+ 1742  exit
+ 1743  vi ~/.cargo/config 
+ 1744  vi /home/aditya/x86_64-blog_os.json 
+ 1745  cp /home/aditya/x86_64-blog_os.json /home/aditya/.cargo/
+ 1746  clear
+ 1747  exit
+ 1748  clear
+ 1749  ls
+ 1750  clear
+ 1751  echo $PATH
+ 1752  ls /home/aditya/.cargo/bin/
+ 1753  clear
+ 1754  ls
+ 1755  clear
+ 1756  cd uxrt-toplevel/
+ 1757  ls
+ 1758  rm -rf build/
+ 1759  ls
+ 1760  clear
+ 1761  vi Makefile 
+ 1762  make clean-all
+ 1763  clear
+ 1764  make all
+ 1765  echo $PATH
+ 1766  sudo vi ~/.bashrc
+ 1767  exit
+ 1768  ls
+ 1769  cd target_specs/
+ 1770  ls
+ 1771  echo $PATH
+ 1772  vi ~/.bashrc
+ 1773  source ~/.bashrc
+ 1774  echo $PATH
+ 1775  export PATH=/opt/ghc/7.8.4/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/cabal/1.22/bin:/home/aditya/bin:/home/aditya/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+ 1776  echo $PATH
+ 1777  s
+ 1778  clear
+ 1779  cd uxrt-toplevel
+ 1780  ls
+ 1781  rm -rf build/
+ 1782  ls
+ 1783  clear
+ 1784  make clean-all
+ 1785  clear
+ 1786  make all
+ 1787  echo $PATH
+ 1788  ls /home/aditya/bin:
+ 1789  ls /home/aditya/bin
+ 1790  export PATH=/opt/ghc/7.8.4/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/cabal/1.22/bin:/home/aditya/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+ 1791  ls
+ 1792  echo $PATH
+ 1793  clear
+ 1794  make clean-all
+ 1795  ls
+ 1796  make all
+ 1797  clear
+ 1798  export PATH=/opt/ghc/7.8.4/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/cabal/1.22/bin:/home/aditya/.cargo/bin:/home/aditya/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+ 1799  echo $path
+ 1800  echo $PATH
+ 1801  clear
+ 1802  make clean-all
+ 1803  clear
+ 1804  make all
+ 1805  ls
+ 1806  cd ~/.cargo/
+ 1807  ls
+ 1808  cd bin/
+ 1809  ls
+ 1810  ls -lrt
+ 1811  mkdir bin1
+ 1812  cp cargo-x* bin1/
+ 1813  ls -lrt
+ 1814  rm -f cargo-x*
+ 1815  cd bin1/
+ 1816  ls
+ 1817  ls -lrt
+ 1818  clear
+ 1819  cd ..
+ 1820  ls
+ 1821  ls -lrt
+ 1822  clear
+ 1823  cd ..
+ 1824  cd uxrt-toplevel
+ 1825  make clean-all
+ 1826  clear
+ 1827  make all
+ 1828  cd packages/
+ 1829  ls
+ 1830  find . -name *.json
+ 1831  clear
+ 1832  make all
+ 1833  cd 
+ 1834  cd uxrt-toplevel
+ 1835  make all
+ 1836  cd /home/aditya/uxrt-toplevel/packages/core-supervisor/fel4/cargo-fel4
+ 1837  ls
+ 1838  vi Makefile 
+ 1839  vi Cargo.toml 
+ 1840  clear
+ 1841  cd ../../../
+ 1842  cd ..
+ 1843  make clean-all
+ 1844  make all
+ 1845  ls
+ 1846  cd build/
+ 1847  ls
+ 1848  cd tools/
+ 1849  ls
+ 1850  file genxrfs 
+ 1851  objdump -h genxrfs 
+ 1852  readelf genxrfs 
+ 1853  readelf -s --dyn-syms genxrfs 
+ 1854  clear
+ 1855  ls
+ 1856  cd ..
+ 1857  vi Makefile 
+ 1858  cd packages/core-supervisor/fel4/cargo-fel4/
+ 1859  ls
+ 1860  vi README.md 
+ 1861  vi rust-toolchain 
+ 1862  cd target_specs/
+ 1863  ls
+ 1864  vi x86_64-sel4-fel4.json 
+ 1865  ls
+ 1866  vi README.md 
+ 1867  cd
+ 1868  cd uxrt-toplevel
+ 1869  make clean-all
+ 1870  clear
+ 1871  make all
+ 1872  vi Makefile 
+ 1873  cd packages/core-supervisor/fel4/cargo-fel4/
+ 1874  ls
+ 1875  vi Makefile 
+ 1876  clear
+ 1877  cd -'
+ 1878  cd ../../../
+ 1879  cd ..
+ 1880  make clean-all
+ 1881  make all
+ 1882  cd ~/.cargo
+ 1883  ls
+ 1884  cd bin/
+ 1885  ls
+ 1886  mv bin1/* .
+ 1887  ls
+ 1888  clear
+ 1889  cd ../../uxrt-toplevel
+ 1890  make clean-all
+ 1891  make all
+ 1892  clear
+ 1893  cd ../Desktop/
+ 1894  git clone https://github.com/oscarlab/hoss.git
+ 1895  cd *
+ 1896  ls
+ 1897  ls -lrt
+ 1898  cd hoss/
+ 1899  ls
+ 1900  clear
+ 1901  cd ../../
+ 1902  cd uxrt-toplevel
+ 1903  ls
+ 1904  rm -rf build/
+ 1905  ls
+ 1906  make clean-all
+ 1907  clear
+ 1908  make
+ 1909  clear
+ 1910  rustc --print sysroot
+ 1911  vi /home/aditya/.rustup/toolchains/
+ 1912  cd /home/aditya/.rustup/toolchains/
+ 1913  ls
+ 1914  tree
+ 1915  clear
+ 1916  ls
+ 1917  cd nightly-x86_64-unknown-linux-gnu/
+ 1918  ls
+ 1919  cd bin/
+ 1920  ls
+ 1921  cd ..
+ 1922  ls
+ 1923  cd lib/
+ 1924  ls
+ 1925  cd rustlib/
+ 1926  ls
+ 1927  cd src/
+ 1928  ls
+ 1929  cd rust/
+ 1930  ls
+ 1931  cd src/
+ 1932  ls
+ 1933  clear
+ 1934  cd
+ 1935  clear
+ 1936  cd .rustup/
+ 1937  ls
+ 1938  cd toolchains/
+ 1939  ls
+ 1940  tree -d nightly-x86_64-unknown-linux-gnu/
+ 1941  clear
+ 1942  ls
+ 1943  cd nightly-x86_64-unknown-linux-gnu/
+ 1944  ls
+ 1945  cd lib/
+ 1946  ls
+ 1947  cd rustlib/
+ 1948  ls
+ 1949  clear
+ 1950  ls
+ 1951  cd x86_64-unknown-linux-gnu/
+ 1952  ls
+ 1953  cd bin/
+ 1954  ls
+ 1955  cd ..
+ 1956  ls
+ 1957  cd src/
+ 1958  ls
+ 1959  cd rust/
+ 1960  ls
+ 1961  cd src/
+ 1962  ls
+ 1963  clear
+ 1964  cd ..
+ 1965  cd
+ 1966  cd uxrt-toplevel
+ 1967  ls
+ 1968  make clean-all
+ 1969  clear
+ 1970  ls ~/.cargo/bin/
+ 1971  mv ~/.cargo/bin/bin1/* ~/.cargo/bin/
+ 1972  cd ~/.cargo/bin/
+ 1973  ls
+ 1974  cd bin1/
+ 1975  ls
+ 1976  ls -lrt
+ 1977  cd ..
+ 1978  ls -lrt
+ 1979  clear
+ 1980  ls
+ 1981  rm -f bin1/
+ 1982  rm -rf bin1/
+ 1983  ls
+ 1984  clear
+ 1985  cd ..
+ 1986  cd .cargo/
+ 1987  ls
+ 1988  rm -f x86_64-blog_os.json 
+ 1989  ls
+ 1990  vi env 
+ 1991  vi config 
+ 1992  mv config config1
+ 1993  ls
+ 1994  cd bin/
+ 1995  ls
+ 1996  clear
+ 1997  cd ~/uxrt-toplevel/
+ 1998  make all
+ 1999  clear
+ 2000  ls
+ 2001  cd osrust/pill-opp/rust-code/
+ 2002  ls
+ 2003  cd blog_os/
+ 2004  ls
+ 2005  clear
+ 2006  cargo install bootimage --version "^0.7.3"
+ 2007  ls
+ 2008  history > hist.txt
