@@ -1,0 +1,189 @@
+power->load bios from ROM->bios run self test and initialize the some routine for hardware->looks for bootable disks
+if it finds one then control is transfered to its respective bootloader which is a 512 byte portion of executable code stored
+at the disk beginning. 
+
+many bootloaders are larger than 512 bytes, it is divided into 2 stages and loaded subsequently.
+
+What does bootloader do or who load the kernel into memory? answer is bootloader. 
+it determines the location of kernel image on the disk and load it into the memory.
+
+bootloader also needs to switch the cpu from the 16 bit real mode first to the 32 bit protected mode and then to the
+64 bit long mode. 
+
+Another sub sequent task of bootloader is to query certain info from the bios and pass it to the OS kernel. 
+
+*********Multiboot******* to avoid that every os implements a boot loader, which is only compatible to single os,
+they decided to create an open bootloader standard (standard is a way to follow some rules based on other architecture 
+requirements
+
+This standards define an interface between a  bootloader and os. 
+
+How do we make a kernel multiboot compliant> solution is add a multiboot header structure at the beginning of the kernel file. 
+This addition makes it very easy to boot an os in grub. 
+
+Problem with this methods?
+This compliant support only 32 bit protected mode. Extra overhead work is to configure the cpu to 16 bit and 64 bit mode. 
+another problem is that, kernel should be linked with an adjusted default page size, because grub can not find the multiboot header otherwise.
+another problem is that, bootloader should pass some boot information to kernel that might contains lots of architecture specific structure 
+instead of providing clean abstractions. 
+GRUB should be installed on the host system to create a bootable disk image from the kernel file. This makes development on windows and Mac more difficult.
+
+in first edition, Where I have written multiboot compliant bootlaoder, you can see the code at location: /home/aditya/osrust/Makefile and go through the src code
+.
+
+A Minimal kernel:
+objective: print hello world on the screen.. In freestanding tutorial, we created freestanding binary through cargo, but depending on os, we needed 
+different entry point names and compile flags. That is because cargo builds for the host system by default, i.e. the system you are running on. 
+
+Installing rust nightly:
+Rust has 3 release channels: stable, beta and nightly. For experimental feature, we will use nightly. 
+
+The nightly compiler allows us to opt-in to various experimental features by using so called feature flags at the top of our file. 
+exm: for inlining asm code, We can use asm! macro by adding #![feature(asm)] to the top of our main.rs file.
+
+Target Specification. 
+Cargo support various target using the --target flag. Any target should be in triplet format. which should describe the cpu architecture, the vendor, the os and the ABI.
+
+for example: x86_64-unknown-linux-gnu target triplet describe the system with a x86_64 cpu, no clear vendor as unknown, and a linux os with the GNU-ABI. 
+
+For our target system, however, we require some special configuration parameters(eg no underlying os) that is the reason, we can not use any existing target triplet.
+but we can make our own triplet as rust allow us to define our own target through a JSON file.
+
+So here, I have created .json file, that is containing following values:
+
+{
+    "llvm-target": "x86_64-unknown-none", //here we have not specified any underlaying os and ABI. 
+    "data-layout": "e-m:e-i64:64-f80:128-n8:16:32:64-S128", //information about integer, float, double datatypes.
+    "arch": "x86_64",
+    "target-endian": "little", //will support little endianess 
+    "target-pointer-width": "64", // pointer with will be 64 bit wide.
+    "target-c-int-width": "32", // 
+    "os": "none",
+    "executables": true,
+    "linker-flavor": "ld.lld", //we do not want to use platform's default linker, that is why we are using here cross platform LLD linker
+  "linker": "rust-lld",// this linker will be shipped with Rust for linking the kernel.
+  "panic-strategy": "abort", //this setting specifies that the target doesn;t support unwinding stack on panic, instead program should abort directly. We can remove this from Cargo.toml file.
+  "disable-redzone": true, //since we are writing kernel, we will need to handle some intrrupts at some point. We can do this safely by disabling the redzone option in .json file. this option will disable a certain stack pointer optimization called the "red zone", otherwise, it would cause stack corruption problem. 
+  "features": "-mmx,-sse,+soft-float"// - indicate disabling the target feature, and + indicate enabling the target feature. 
+}
+
+os = none and llvm-target, because we will run our code on baremetal. 
+
+Disable the Red Zone? why and how?
+What is Red Zone:? It is an optimization system V ABI, that allows a functions to temporarly use the 128 bytes below* its stack frame without adjusting stack pointer. '
+
+what is leaf function: leaf function is a function that does not call other functions. A tail recursive function that doesn;t call other functions can be turned into a leaf function.
+
+here mmx and sse feature is disabled because: with SIMD instruction support, kernel needs to restore all registers to their original state before continuing an interrupted program. This 
+means that the kernel has to save the complete SIMD state to main memory on each system call or hardware interrupt. Since SIMD state is very large around 512 to 1600 bytes and interrupts can occur very often. these additional save and store operations consideribly harm performance. For that we disable this for our kernel but not application. 
+
+Why soft-float: when we disable the SIMD, some floating point operations on x86_64 require SIMD register by default. for that we are using soft-float feature here. 
+
+Building our kernel:
+
+errors: error[E0463]: can't find crate for `core` // telling that rust compiler is not able to find out the core library. This library contains basic rust types such as Result, Option and iterators and is implicitly linked to all no_std crates.
+
+This is only valid for our host target x86_64-unknown-linux-gnu triplet. Not for our custome target. To avoid this problem, we need to compile core for our custome target. For that we will use
+Cargo xbuild.
+
+cargo xbuild is a wrapper for cargo build that automatically cross-compile core and other built-in libraries. 
+installing cargo xbuild
+cargo install cargo-xbuild.
+
+Now We can see that cargo xbuild cross compiles the core, compiler_builtin and alloc libraries for our new custom target. 
+Since these libraries use a lot of unstable features internally, this only works with nightly compiler. Afterwards, cargo xbuild successfully compiles our blog_os crate.
+
+How do we avoid passing the --target parameter on every invocation of cargo xbuild?
+solution: by overriding the default target. this can be done by creating a cargo configuration file at .cargo/config with these entries.
+
+[build]
+target = "....json file name"
+
+
+Now we going to print things on screen: The easiest way to print text to the screen at this stage is the VGA text buffer. This is a special memory area mapped to the VGA hardware.
+It consists of 25 lines and lenth of each line is 80 character. 
+For that we need to pass the address of this VGA text buffer in our main.rs file.
+
+address will be: 0xb8000.
+
+We will have to make some addition in main.rs file for printing hello world on screen using vga text buffer.
+
+static HELLO: &[u8] = b"Hello World!";
+
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    let vga_buffer = 0xb8000 as *mut u8; //casting an integer into a raw pointer. 
+
+    for (i, &byte) in HELLO.iter().enumerate() { //iterating over the bytes of the static HELLO byte string. enunerate() to additionally get a running variable i. 
+        unsafe {                                                                     //why unsafe?
+            *vga_buffer.offset(i as isize * 2) = byte; //
+            *vga_buffer.offset(i as isize * 2 + 1) = 0xb; //0xb is a light cyan.
+        }
+    }
+
+    loop {}
+}
+
+
+why unsafe?
+because rust compiler can not prove that the raw pointer what I created is valid or not. That could point anywhere, so lead to data corruption. So by putting unsafe block, assuring the rust 
+compiler that performing operating is valid. 
+
+Feature of unsafe: (assurance of memory safety, but it does not disable the borrow checker. 
+
+
+    Dereference a raw pointer
+    Call an unsafe function or method
+    Access or modify a mutable static variable
+    Implement an unsafe trait
+
+
+Running our kernel. 
+
+Now we have an executable that does something perceptible. First we need to turn our kernel to some bootable disk image by linking it with a bootloader. 
+Then only we can use qemu virtual machine or boot it on real hardware using an usb stick.
+
+Creating a boot image?
+instead of writing our own bootloader, we will use a creat bootloader, that will implement a basic bios bootloader without any c dependencies, just Rust and inline assembly. we will
+add this crate in our Cargo.toml file. 
+
+but still we will have some problem even if we add this bootloader. we will have to link our kernel to bootloader after compilation, but cargo has no support for post-build script.
+
+How to link kernel to bootloader? we will use a tool called bootimage. That first compile the kernel and then bootloader and then link them togather to create a bootable disk image. 
+How do we install this tool: cargo install bootimage --version "^0.7.3"
+
+^0.7.3 is so-called a caret requirement means this version or a later version will be compatible version. 
+
+
+Initially, It was giving some crate error. But now it is working fine and installed the bootimage tools using above command. 
+
+Dependencies to run bootimage and building bootloader, we need llvm-tools-preview that will be installed using this command
+
+rustup add component llvm-tools-preview. 
+
+Now we have bootimage installed and llvm-tools-preview support is there, we can create bootable disk image using this command. 
+cargo bootimage. 
+
+it will perform two operation: 
+1. it will recompile the kernel using cargo xbuild and it will compile the bootloader. For very first time, Compiling and building the bootloader, it will take time. Like all crate dependencies it is only built once and then cached. 
+
+Bootimage will combines the bootloader and kernel to bootable disk image. that can be run using qemu.
+
+This *.bin file will be located at target/x86*/debug/ directory. 
+
+
+How does it work?
+it also take care of kernel compilation and bootloader dependencies compilation as an standalone executable.
+bootimage work as linker. it links the kernel elf bytes to the bootloader.
+
+When booted, the loader reads and parses the appended ELF file. it then maps the program segments to virtual addresses in the page tables, zeroes the 
+.bss section and sets up a stack. finally, it reads the entry point address(our _start function and jumps to it.)
+
+Booting the images in qemu: 
+qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin
+warning: TCG doesn't support requested feature: CPUID.01H:ECX.vmx [bit 5
+
+We can also run the image using usb stick;
+dd if=target/x86_64-blog_os/debug/bootimage-blog_os.bin of=/dev/sdX && sync
+
+
