@@ -62,10 +62,20 @@ struct Buffer{
 ///fgc and bgc colors are specified by ColorCode and a reference to a VGA Buffer is stored in
 ///buffer. Here we need to tell the compiler how long the refernce is valid. The static life time
 ///means the reference is valid for the whole program. 
+
 pub struct Writer{
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer,
+}
+
+use lazy_static::lazy_static;
+lazy_static! {
+    pub static ref WRITER: Writer = Writer {
+        column_position: 0,
+        color_code: ColorCode::new(Color::Yellow, Color::Black),
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    };
 }
 
 ///now we are going to print the screen. Here we can use Writer to modify the buffer's characters. 

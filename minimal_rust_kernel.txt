@@ -187,3 +187,16 @@ We can also run the image using usb stick;
 dd if=target/x86_64-blog_os/debug/bootimage-blog_os.bin of=/dev/sdX && sync
 
 
+How do we use an interface globally so that It can be used as an interface from other modules
+without Writer instance. For that we will create a static WRITER. (changes in vga_buffer.rs)
+
+To provide run-time initialization of static variable, we use crate lazy_static. Whenever a static variable will get accessed for very first time, it will initialize itself. 
+
+spin_no_std: to avoid linking standard library.
+
+Even if we make our Writer static, we can not write anything to it. Since this is immutable. For that we have to make it static mutable. but this will create data racing problem for every read and write to it. We can try immutable static with a cell type like RefCell or UnsafeCell that provide interior mutability. 
+
+To provide synchronization in interior mutability, We will use a crate called spin. (in Cargo.toml)
+This is a basic kind of mutex that does not require any os feature. Since at this time, Our kernel doesn;t have any blocking support or concept of thread, so instead of blocking, the thread simply try to lock it again and again until the mutex is free again. 
+
+
