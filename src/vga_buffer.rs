@@ -6,6 +6,34 @@
 use volatile::Volatile;
 use core::fmt;
 
+/* Here, we have prefixed the invocation of print! macro with $crate. Now we do not 
+ * need to import the print! macro if we only want to use println.
+ * #[macro_export]: to make it available everywhere in our crate. But at the same time, it will
+ * places the macro in root namespace of the crate. So we can not access this using 
+ * 'use crate::vga_buffer::println', we will have to use 'use crate::println'
+*/
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
+/*Here _print function is first locking the Writer and then it is calling 
+ * write_fmt function. The unwrap() at the end panics if printing is not successful.
+ */
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+    WRITER.lock().write_fmt(args).unwrap();
+}
+
 /// The standard color palette in VGA text mode.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -68,14 +96,14 @@ pub struct Writer{
     color_code: ColorCode,
     buffer: &'static mut Buffer,
 }
-
+use spin::Mutex;
 use lazy_static::lazy_static;
 lazy_static! {
-    pub static ref WRITER: Writer = Writer {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-    };
+    });
 }
 
 ///now we are going to print the screen. Here we can use Writer to modify the buffer's characters. 
