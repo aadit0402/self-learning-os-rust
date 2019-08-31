@@ -1,7 +1,43 @@
-#![no_std]
+#![test_runner(crate::test_runner)]
+#![feature(custom_test_frameworks)]
 #![no_main]
+#![no_std]
+
 use core::panic::PanicInfo;
 mod vga_buffer;
+
+#![reexport_test_harness_main = "test_main"]
+
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    println!("Hellow World {}", "@");
+    
+    #[cfg(test)]
+    test_main();
+	/* this is the test framework entry function */
+
+    loop {}
+}
+
+
+#[test_case]
+fn trivial_assertion() {
+   print!("trivial assertion...");
+    assert_eq!(1,1);
+    println!("[ok]");
+}
+
+/* here &[&dyn fn()]: is a argument, slice of trait object references of the fn() trait.
+ */
+
+#[cfg(test)]
+fn test_runner(tests: &[&dyn Fn()]) { 
+    println!("Running {} tests", tests.len());
+    for test in tests {
+        test();
+    }
+}
+
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -11,11 +47,4 @@ fn panic(_info: &PanicInfo) -> ! {
  * anything like write_str or writer_lock. For using println, We made it public but hidden from 
  * generated documentation.
  */
-
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Hellow World {}", "@");
-    
-    loop {}
-}
 

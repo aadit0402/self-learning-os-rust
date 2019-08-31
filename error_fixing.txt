@@ -1,0 +1,35 @@
+calls in statics are limited to constant functions, tuple structs and tuple variants
+  --> src/vga_buffer.rs:74:17
+   |
+74 |     color_code: ColorCode::new(Color::Yellow, Color::Black),
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*can be solved by using const functions, but again the proble is limitation of Rust compiler.
+here Rust's const evaluator doesn't have feature to convert a row pointers to reference at compile time. 
+So the another solution is Lazy Statics. by using this crate, static variable lazily initializes itself when it is first accessed. So here, we do not want compile time initialization for static variable. This lazy static provide run-time initialization.  (changes in file: Cargo.toml)
+
+error[E0017]: references in statics may only refer to immutable values
+  --> src/vga_buffer.rs:75:22
+   |
+75 |     buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ statics require immutable values
+
+error[E0019]: static contains unimplemented expression type
+  --> src/vga_buffer.rs:75:22
+   |
+75 |     buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0658]: dereferencing raw pointers in statics is unstable
+  --> src/vga_buffer.rs:75:22
+   |
+75 |     buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: for more information, see https://github.com/rust-lang/rust/issues/51911
+   = help: add #![feature(const_raw_ptr_deref)] to the crate attributes to enable
+
+
+How to fix these errors:
+*static variables are inintialized at compile time while normal variables are initialized at runtime. This 
+evaluation is done by const evaluator, this is a componenet of Rust compiler. 

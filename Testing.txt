@@ -1,0 +1,17 @@
+How do we perform unit and integration testing in no_std executables: 
+requirement: Rust support for custom test frameworks(will be used in executing test functions inside our kernel)
+Rust has built-in support for unit testing that is in standard library but our kernel is not containing standard library. so we can not use test crate. So cargo xtest command will not work for us here. and it is also not available for our baremetal target.
+
+Solution: we can port the test crate to a #[no_std] based code. problem is to redefine the panic macro. It will be a unstable solution.
+so this feature will not require any external libraries.
+
+How does it work? 
+it collect all the #[test_case] annotated function and then it invoke all user specified runneer function with list of tests specified as arguments.
+
+we will use qemu and bootimage feature to show the results out of qemu.
+
+Now we can run cargo xtest, it will work but agian the problem is that, we will not get any message from our test_runner. _start is our main function and entry point of kernel execution. This custom test framework generate a main function, that calls the test_runner function, but we have used here #[no_main] attribute, so we need to provide our own entry point. 
+
+solution: we will use attribute: reexport_test_harness_main, then only we can call the renamed function from our _start function.
+
+
