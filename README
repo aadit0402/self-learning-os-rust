@@ -205,4 +205,12 @@ After adding this spin crate, we have only this buffer block unsafe. and that is
 The format_args macro builds a fmt::Arguments type from the passed arguments, which is passed to _print. 
 To print to the vga buffer, we just copy the println! and print! macros, but modify them to use our own _print function.
 
+some strange syntax and code:
+&mut *(0xb8000 as mut * Buffer): here we are casting this 0xb8000 as raw mutable buffer then we are deferncing it using * and again we are borrowing through &mut. 
+ 
+it's equivalent c code will be like: (Buffer *)0xb8000
 
+unwrap(): since the fmt::write trait is defined in such a way that write_str will always return a result. Some implementations might return an error. Here we never want to return an error. That is why we used here wrap function.
+
+To launch the os in qemu:
+qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin
