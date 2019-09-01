@@ -180,7 +180,7 @@ When booted, the loader reads and parses the appended ELF file. it then maps the
 .bss section and sets up a stack. finally, it reads the entry point address(our _start function and jumps to it.)
 
 Booting the images in qemu: 
-qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin
+
 warning: TCG doesn't support requested feature: CPUID.01H:ECX.vmx [bit 5
 
 We can also run the image using usb stick;
@@ -214,3 +214,6 @@ unwrap(): since the fmt::write trait is defined in such a way that write_str wil
 
 To launch the os in qemu:
 qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin
+
+
+

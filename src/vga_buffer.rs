@@ -12,7 +12,11 @@ use core::fmt;
  * places the macro in root namespace of the crate. So we can not access this using 
  * 'use crate::vga_buffer::println', we will have to use 'use crate::println'
 */
-
+pub struct Writer{
+    column_position: usize,
+    color_code: ColorCode,
+    buffer: &'static mut Buffer,
+}
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
@@ -91,11 +95,7 @@ struct Buffer{
 ///buffer. Here we need to tell the compiler how long the refernce is valid. The static life time
 ///means the reference is valid for the whole program. 
 
-pub struct Writer{
-    column_position: usize,
-    color_code: ColorCode,
-    buffer: &'static mut Buffer,
-}
+
 use spin::Mutex;
 use lazy_static::lazy_static;
 lazy_static! {
@@ -186,7 +186,7 @@ impl Writer {
     /*fn clear_row(&mut self, row: usize) { /* TODO */}*/
 }
 
-pub fn print_something() {
+/*pub fn print_something() {
     use core::fmt::Write;
     let mut writer = Writer {
         column_position: 0,
@@ -198,7 +198,7 @@ pub fn print_something() {
     writer.write_string("ello ");
     writer.write_string("Wörld!");
     write!(writer, "the numbers are {} and {}", 42, 1.0/3.0).unwrap();
-}
+}*/
 
 
 
