@@ -1,0 +1,7 @@
+# in .cargo/config
+[build]
+target = "/home/aditya/self-learning-os-rust/x86_64-self_learning_os.json"
+[target.'cfg(target_os = "none")']
+runner = "bootimage runner"
+
+
