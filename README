@@ -216,4 +216,40 @@ To launch the os in qemu:
 qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin
 
 
+after adding the testcases, we are facing one error: --bin self-learning_os rerun:
+why? After executing the testcases control is returned to _start function and at the end it will run in loop. 
+that is why cargo xtest is failing and not able to return from main.
 
+Exiting from qemu safely: for that we need to add some qemu specific parameters: 
+At this point of time, we have not yet implemented a proper way to shutdown our OS. 
+Solution: implementing support for either APM or ACPI power management standard. this is not an easy solution. 
+it would be easy if we use the device support of qemu. it can be added using device argument. We will just need to enable it. package.metadata.bootimage.test-args to our configuration files: Cargo.toml
+
+This bootimage runner will append this test-args to default qemu command. If we run cargo xrun, it will ignore this argument. 
+isa-debug-exit is a device argument. We also need to pass two more parameter: iobase and iosize to specify ioport, it is like an interface between device and kernel.
+
+How does CPU and peripheral hardware communicates to each other: memory mapped IO(VGA Buffer example) and port mapped IO. for port mapped IO, we use IN and OUT cpu special instruction. For that we need port address and port size. 
+
+After adding exit_code, we are getting this error:
+ failed to resolve: use of undeclared type or module `x86_64`
+  --> src/main.rs:22:9
+   |
+22 |     use x86_64::instructions::port::Port;
+   |         ^^^^^^ use of undeclared type or module `x86_64`
+
+error[E0433]: failed to resolve: use of undeclared type or module `Port`
+  --> src/main.rs:25:24
+   |
+25 |         let mut port = Port::new(0xf4);
+   |                        ^^^^ use of undeclared type or module `Port`
+
+warning: unused import: `x86_64::instructions::port::Port`
+  --> src/main.rs:22:9
+   |
+22 |     use x86_64::instructions::port::Port;
+
+solution: add dependencies in Cargo.toml file(x86_64 = "0.7.0"
+
+Still we are getting this error: error: test failed, to rerun pass '--bin self-learning_os'
+
+solution: add test-success-exit-code = 33 in Cargo.toml config file 
