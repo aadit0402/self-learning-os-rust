@@ -39,13 +39,14 @@ pub extern "C" fn _start() -> ! {
 }
 
 
-#[test_case]
+/*#[test_case]
 fn trivial_assertion() {
     serial_print!("trivial assertion...");
-    assert_eq!(0,1);
+    assert_eq!(1,1);
     serial_println!("[ok]");
 }
 
+*/
 /* here &[&dyn fn()]: is a argument, slice of trait object references of the fn() trait.
  */
 
@@ -59,8 +60,19 @@ fn test_runner(tests: &[&dyn Fn()]) {
 }
 
 
+#[cfg(not(test))]
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
+    loop {}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    serial_println!("[failed]\n");
+    serial_println!("Error: {}\n", info);
+    exit_qemu(QemuExitCode::Failed);
     loop {}
 }
 /* Now we have added our own println, so we can use this here and will not need to add here
