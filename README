@@ -252,4 +252,10 @@ solution: add dependencies in Cargo.toml file(x86_64 = "0.7.0"
 
 Still we are getting this error: error: test failed, to rerun pass '--bin self-learning_os'
 
-solution: add test-success-exit-code = 33 in Cargo.toml config file 
+solution: add test-success-exit-code = 33 in Cargo.toml config file
+
+Status after 4th tutorial(adding intigration tests)
+added testframework to our rust kernel that include basic boot tests and some custom tests that is defined in our should_panic.rs files. 
+How to use #[test_case] attribute in baremetal environment and getting error messages on console, instead of vga_buffer. For that I used serial_port basic driver. in serial.rs file. 
+
+Integration tests run in its separate environment so that can make access to hardware interfaces or other tests that should panic(custom).Tests that exit in the tests/ directory, are completely separate executable files. so using lib.rs files, we gave it access to the qemu features qemu_exit and macro from serial.rs file 'serial_println'  
