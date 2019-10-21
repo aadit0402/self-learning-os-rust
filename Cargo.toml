@@ -1,5 +1,5 @@
 [package]
-name = "self-learning_os"
+name = "self_learning_os"
 version = "0.1.0"
 authors = ["Aditya Upadhyay <aditya.sidd.upadhyay@gmail.com>"]
 edition = "2018"
@@ -28,4 +28,8 @@ panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+[[test]]
+name = "should_panic"
+harness = false
 

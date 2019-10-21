@@ -2,17 +2,16 @@
 #![no_std]
 
 #![feature(custom_test_frameworks)]
-#![test_runner(crate::test_runner)]
+#![test_runner(self_learning_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 
 
 
 use core::panic::PanicInfo;
-mod vga_buffer;
-mod serial;
+use self_learning_os::println;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/*#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
 pub enum QemuExitCode {
     Success = 0x10,
@@ -26,6 +25,7 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
         port.write(exit_code as u32);
     }
 }
+*/
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
@@ -50,7 +50,7 @@ fn trivial_assertion() {
 /* here &[&dyn fn()]: is a argument, slice of trait object references of the fn() trait.
  */
 
-#[cfg(test)]
+/*#[cfg(test)]
 fn test_runner(tests: &[&dyn Fn()]) { 
     serial_println!("Running {} tests", tests.len());
     for test in tests {
@@ -58,7 +58,7 @@ fn test_runner(tests: &[&dyn Fn()]) {
     }
     exit_qemu(QemuExitCode::Success); /* now this call will shutdown the kernel properly*/
 }
-
+*/
 
 #[cfg(not(test))]
 #[panic_handler]
@@ -67,16 +67,22 @@ fn panic(info: &PanicInfo) -> ! {
     loop {}
 }
 
-#[cfg(test)]
+/*#[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
     loop {}
-}
+}*/
 /* Now we have added our own println, so we can use this here and will not need to add here
  * anything like write_str or writer_lock. For using println, We made it public but hidden from 
  * generated documentation.
  */
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    self_learning_os::test_panic_handler(info);
+}
 
