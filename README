@@ -258,4 +258,40 @@ Status after 4th tutorial(adding intigration tests)
 added testframework to our rust kernel that include basic boot tests and some custom tests that is defined in our should_panic.rs files. 
 How to use #[test_case] attribute in baremetal environment and getting error messages on console, instead of vga_buffer. For that I used serial_port basic driver. in serial.rs file. 
 
-Integration tests run in its separate environment so that can make access to hardware interfaces or other tests that should panic(custom).Tests that exit in the tests/ directory, are completely separate executable files. so using lib.rs files, we gave it access to the qemu features qemu_exit and macro from serial.rs file 'serial_println'  
+Integration tests run in its separate environment so that can make access to hardware interfaces or other tests that should panic(custom).Tests that exit in the tests/ directory, are completely separate executable files. so using lib.rs files, we gave it access to the qemu features qemu_exit and macro from serial.rs file 'serial_println' 
+
+Adding exception: Lecture 5
+
+Exception is something that tells the cpu to perform some additional task and something wrong has happened with the current instruction.
+The main difference between handling function call and exception is that, Exception is handled by the cpu while function call is performed by
+compiler. Example of exception is: divide by 0. 
+
+Whenever any exception occurs, CPU is get interrupted by current exception and then it look into the handler (Interrupt Subroutine) and save some registers values; 
+
+on X86, we have 20 exception types. like page fault(when there is a page missing(unmapped pages or we are trying to write read-only opened files. ), general protection faults:trying to run unprivileged instructions in user mode or trying to change bit value of reserved field in configuration register(access violation), breakpoint exception. Double fault: When there is no handler for an exception, registered in kernel code. Triple fault: when there is no handler to report a double fault. In that there is a chances of system crash or we can say some unavoidable error that may lead down to either rebooting the system. 
+On x86, we have a intruppt descriptor table structure having field: Exception name, vector no, type, mnemonic and error code. For every different architecture, there is different IDT, because different architecture is made for different purposes. For ARM, it will be different.
+
+Exceptions are not same as errors. These are the categories of exception: fault, trap, abort. Fault can be corrected while trap can be reported immediately and situations that can not be recovered leads abort. 
+
+How cpu (not compiler) handle interrupt? This is the step that usually cpu perform:
+1. values, pushed on the stack: some registers including instruction pointer and RFLAGS register.
+2. then cpu reads corresponding entry from the descriptor table. There is one entry(vector no) in IDT table. That contain the status of that bit value. for each exception, there is one entry in IDT table, We can not have more than 256 exception, because on x86, it is set as int IDT[256]. 
+3. if there is no entry for raised exception, then raise a double fault. 
+4. if there is again no entry for double fault handler for that exception, then it raises a triple fault.
+5. then it checks 40th bit, if it is not set in that case, it disable hardware interrupt. 
+6. Then it load the specified GDT(global descriptor table) selector into the cs segment.
+7. then it starts excuting handler function for that exception from the GDT.
+
+Since, I am using rust, then there is already a implemented crate for x86. So from this crate, we will use IDT. 
+for linux, x86 uses System V ABI for calling convention.  According to that, first 6 arguments are passed in the follwoing registers: rdi, rsi, rdx, rcx, r8 and r9. If there is any additional argument, then it is pused on the stack. and result is returned  in rax and rdx. (This only apply for C language, not for rust)
+
+According to calling convention in C, these are the registed that is preserved: rbp, rbx, rsp, r12, r13, r15 and scratch registers: rax, rcx, rdx, rsi, rdi, r8, r9, r10, r11.
+
+At the function beginning of the called function, we store these preserved register value onto the stack. This values can changed only by the called function, but should be restored with original value before the exit and return to caller.
+Preserved registers are callee saved while scratch register is caller saved. 
+
+if we want to add our own interrupt handler then we can introduce that by modifying the higher entry in the IDT table.  Size of IDT is restricted to 256 because of type u8. entries more then 256 might cause array out of bound panic.  After the entries of hardware exception, we can add our own interrupt handler entry.   
+These exceptions is indicated by a specific bit. for example, for page fault, 14th bit should be set.  
+
+
+on X86, C Calling convention uses SYSTEM V ABI on linux. 

@@ -30,11 +30,15 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hellow World {}", "@");
-    
+   
+    self_learning_os::init(); //to enable interrupt descriptor table. Here I am going to test breakpoint exception.
+    x86_64::instructions::interrupts::int3();
+
     #[cfg(test)]
     test_main();
 	/* this is the test framework entry function */
-
+    
+    println!("It did not crash!!!");
     loop {}
 }
 
