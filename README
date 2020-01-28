@@ -294,4 +294,15 @@ if we want to add our own interrupt handler then we can introduce that by modify
 These exceptions is indicated by a specific bit. for example, for page fault, 14th bit should be set.  
 
 
-on X86, C Calling convention uses SYSTEM V ABI on linux. 
+on X86, C Calling convention uses SYSTEM V ABI on linux.
+
+How cpu handle double fault exception? Why cpu was rebooting itself when we try to write a memory. 
+
+* When any exception occur and there is no handler function for that in IDT, then in that case, double fault exception is generated. if again, there is no handler function for double fault, then again tripple fault and then that leads to system reboot. qemu does not handle tripple fault. 
+
+* sometimes there might be a case of swapped out of handler. 
+* if kernel overflow its stack, in that case it will hit a gaurd memory that is associated with stack frame. This guard memory is not mapped to any physical memory and that leads to page fault. This is just to protect the memory overwriting.
+
+How do cpu handle page fault: when cpu finds page fault, it access the handler function of that fault and push the exception stack frame onto stack. 
+but stack pointer is still pointing to some non present guarded page and that leads to double page fault. and again the cpu do same work like pushing exception stack frame onto stack, but this time, stack pointer points to guard page  and there is no mapping of this guard page and physical memory. that iwll again lead to tripple page fault and hence system reboot. 
+ 

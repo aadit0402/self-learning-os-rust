@@ -33,7 +33,10 @@ pub extern "C" fn _start() -> ! {
    
     self_learning_os::init(); //to enable interrupt descriptor table. Here I am going to test breakpoint exception.
     x86_64::instructions::interrupts::int3();
-
+    
+   unsafe {
+        *(0xdeadbeef as *mut u64) = 42;
+    };
     #[cfg(test)]
     test_main();
 	/* this is the test framework entry function */
