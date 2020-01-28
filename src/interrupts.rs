@@ -1,6 +1,7 @@
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 use crate::println;
 use lazy_static::lazy_static;
+use crate::gdt;
 
 //initially I used static IDT, but then we were trying to modify this IDT value, So I tried this
 //mut keyword, so that we can modify the value. Point to remember is that static mutable is prone
@@ -12,7 +13,9 @@ lazy_static! {
     static ref IDT: InterruptDescriptorTable = {
         let mut idt = InterruptDescriptorTable::new();
         idt.breakpoint.set_handler_fn(breakpoint_handler);
-        idt.double_fault.set_handler_fn(double_fault_handler);
+        unsafe {
+            idt.double_fault.set_handler_fn(double_fault_handler).set_stack_index(gdt::DOUBLE_FAULT_IST_INDEX);
+        }
         idt
     };
 }
@@ -43,3 +46,4 @@ fn test_breakpoint_exception() {
     x86_64::instructions::interrupts::int3();
     serial_println!("[ok]");
 }
+

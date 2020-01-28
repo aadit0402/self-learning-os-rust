@@ -305,4 +305,8 @@ How cpu handle double fault exception? Why cpu was rebooting itself when we try 
 
 How do cpu handle page fault: when cpu finds page fault, it access the handler function of that fault and push the exception stack frame onto stack. 
 but stack pointer is still pointing to some non present guarded page and that leads to double page fault. and again the cpu do same work like pushing exception stack frame onto stack, but this time, stack pointer points to guard page  and there is no mapping of this guard page and physical memory. that iwll again lead to tripple page fault and hence system reboot. 
+
+How to prevent it??
+
+gdt is a structure that is mostly used with segmentation based memory scheme. It still exists in 64 bit mode during switching between kernel space to user space. 
  

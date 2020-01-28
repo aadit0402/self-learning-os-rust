@@ -37,6 +37,12 @@ pub extern "C" fn _start() -> ! {
    unsafe {
         *(0xdeadbeef as *mut u64) = 42;
     };
+
+   fn stack_overflow() {
+       stack_overflow();
+   }
+    
+   stack_overflow();
     #[cfg(test)]
     test_main();
 	/* this is the test framework entry function */
