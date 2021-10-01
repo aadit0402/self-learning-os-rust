@@ -9,7 +9,7 @@ it determines the location of kernel image on the disk and load it into the memo
 
 bootloader also needs to switch the cpu from the 16 bit real mode first to the 32 bit protected mode and then to the
 64 bit long mode. 
-
+.......................................................................test
 Another sub sequent task of bootloader is to query certain info from the bios and pass it to the OS kernel. 
 
 *********Multiboot******* to avoid that every os implements a boot loader, which is only compatible to single os,
